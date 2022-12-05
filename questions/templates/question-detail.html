@@ -1,0 +1,53 @@
+{%extends 'base.html'%}
+{%block body_block%}
+<div class="container">
+    <div class="row">
+        <div class="col-4"></div>
+        <div class="col-4">
+            <div class="card mb-4 mt-2 border border-3 border-dark">
+                {%if q.image%}
+                    <a href="#!"><img class="card-img-top" src="{{question.image.url}}" alt="..." /></a>
+
+                {%endif%}
+                <div class="card-body">
+                    <div class="small text-muted">{{question.created_date}}</div>
+                    <h2 class="card-title h4">{{question.description}}</h2>
+                    <p class="card-text">Sujjest your comment here !</p>
+                    <form action="{% url 'addanswer' question.id %}" method="post">
+                        {%csrf_token%}
+                        {{form.as_p}}
+                        <input type="submit" value="Add Your Answer" class="btn btn-success">
+                    </form>
+                </div>
+                <p>
+                   
+                    <button class="btn btn-primary form-control" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample" >
+                     Answers
+                    </button>
+                  </p>
+                  <div class="collapse" id="collapseExample">
+                    <div class="card card-body">
+                        <ul  class="list-group">
+                            {%for ans in question.fetch_answers%}
+                            <li class="list-group-item">
+                            <p class="card-text">
+                                {{ans.answer}}
+                                posted by {{ans.user}} on {{ans.created_date}}
+                            </p>
+                            {% if ans.user == request.user %}
+                            <a href="{%url 'removeanswer' ans.id%}" ><button type="button" class="btn btn-danger">Remove</button></a>
+                            {%endif%}
+                            </li>
+                            <a class="btn btn-primary" href="{%url 'upvote' ans.id %}" role="button">upvote <span>{{ans.upvote.all.count}}</span></a>
+
+                            {%endfor%}
+                            
+                        </ul>
+                    </div>
+                  </div>
+            </div>
+        </div>
+        <div class="col-4"></div>
+    </div>
+</div>
+{%endblock%}
